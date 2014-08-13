@@ -33,7 +33,12 @@ class PostLinkCrawler(Crawler):
         A heuristic for finding some first pages to find required posts
         :return:
         """
-        links = self._soup.find('div', {'class': 'pagination'}).find_all('a')
+        pagination_container = self._soup.find('div', {'class': 'pagination'})
+        if pagination_container is None:
+            return []
+
+        links =pagination_container.find_all('a')
+
         return map(lambda l: l.get('href'), links)
 
 

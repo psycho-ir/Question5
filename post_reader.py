@@ -1,31 +1,43 @@
 # -*- coding: utf-8 -*-
-from common import Crawler
+from common import Crawler, Post
+import re
 
 __author__ = 'soroosh'
+
 
 class PostCrawler(Crawler):
     def get_post(self, url):
         post_soup = self._get_soup(url)
         header = post_soup.header.h1.a.string
-        print header
-        views = post_soup.find('li', {'class': 'hit'})
+        views = re.match('.*UserVisits:([0-9]+).*', str(post_soup.find('li', {'class': 'hit'})).replace(',', '')).group(1)
+        id = re.match('.*/([0-9]+)/.*', url).group(1)
+
         category = reduce(lambda x, y: x + '/' + y, map(lambda a: a.string, post_soup.find('li', {'class': 'cat'}).find_all('a')))
         description = str(post_soup.find('div', {'id': 'yiv2931868296yui_3_13_0_ym1_1_1389000431840_2408'}))
         if description == 'None':
             description = str(post_soup.find('p', {'itemprop': 'text'}))
 
-        dl_links = post_soup.find('div', {'class': 'download-links'}).find_all('a')
+        dl_links = map(lambda l: l.get('href'), post_soup.find('div', {'class': 'download-links'}).find_all('a'))
         titles = post_soup.find('div', {'class': 'extra-info'}).find_all('strong')
+        spec = []
         for t in titles:
-            print {t: t.next_sibling.next_sibling.string}
+            sibling = t.next_sibling.next_sibling
+            if sibling.name == 'br':
+                sibling = sibling.previous_sibling.string.strip()
+            elif sibling.name == 'span':
+                sibling = sibling.span.string.strip()
+            elif not sibling.name == 'img':
+                sibling = sibling.string.strip()
 
-        pass
+            spec.append({t.string: unicode(sibling)})
+
+        return Post(id, header, url, views, category, description, spec, dl_links)
 
 
-
-
-c = PostCrawler()
-c.get_post('http://p30download.com/fa/entry/39455/')
+if __name__ == '__main__':
+    c = PostCrawler()
+    p = c.get_post('http://p30download.com/fa/entry/39455/')
+    print p
 
 
 
