@@ -14,7 +14,7 @@ class PostLinkCrawler(Crawler):
         other_existed_pages = self._find_pages()
         if len(other_existed_pages) > 0:
             for page in other_existed_pages:
-                page_links = self._find_page_links(page)
+                page_links = self._find_page_links(self._get_soup(page))
                 for p in page_links:
                     if len(links) < max:
                         links.append(p)
@@ -24,8 +24,12 @@ class PostLinkCrawler(Crawler):
 
 
     def _find_page_links(self, soup):
-        posts = self._soup.find_all('article', {'class': 'post'})
-        selected_links = filter(lambda x: not re.match('http://shop.*', x), map(lambda p: p.find('h1').find('a').get('href'), posts))
+        try:
+            posts = soup.find_all('article', {'class': 'post'})
+            selected_links = filter(lambda x: not re.match('http://shop.*', x), map(lambda p: p.find('h1').find('a').get('href'), posts))
+        except Exception as e:
+            posts = soup.find_all('h3')
+            selected_links = filter(lambda x: not re.match('http://shop.*', x), map(lambda p: p.find('a').get('href'), posts))
         return selected_links
 
     def _find_pages(self):
@@ -43,8 +47,8 @@ class PostLinkCrawler(Crawler):
 
 
 if __name__ == '__main__':
-    crawler = PostLinkCrawler('http://p30download.com/fa/software/')
-    links = crawler.find_links(max=40)
+    crawler = PostLinkCrawler('http://p30download.com/fa/mobile/tag/lg')
+    links = crawler.find_links(max=20)
     print(len(links))
     print links
 
