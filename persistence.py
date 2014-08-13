@@ -12,8 +12,5 @@ def insert_product(p):
     p_dic = p.__dict__
     p_dic['_id'] = p_dic['id']
     del p_dic['id']
-    collection.update({'_id': p_dic['_id']}, p_dic,True)
-
-# result = collection.update({'_id': 2}, {'_id': 2, 'aaa': 'aaaa'}, True)
-# print result
+    collection.update({'_id': p_dic['_id']}, p_dic, True)
 
