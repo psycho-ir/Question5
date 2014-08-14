@@ -1,40 +1,37 @@
 # -*- coding: utf-8 -*-
 __author__ = 'soroosh'
-max_posts = 20
+import strategies
 from category_finder import CategoryCrawler
 from links_finder import PostLinkCrawler
 from persistence import insert_product
-from post_reader import PostCrawler
-from threading import Thread
+from Queue import Queue, Empty
+from config import POST_READING_STRATEGY,NUMBER_OF_PRODUCTS
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 category_crawler = CategoryCrawler()
 selected_category_link = category_crawler.select_random_group()
-print 'Category:%s selected for crawling' % selected_category_link
+logging.info('Category:%s selected for crawling' % selected_category_link)
 post_link_crawler = PostLinkCrawler(selected_category_link)
-selected_links = post_link_crawler.find_links(max=max_posts)
-print 'These posts selected: '
+selected_links = post_link_crawler.find_links(max=NUMBER_OF_PRODUCTS)
+in_queue = Queue()
+
+logging.info('These posts selected: ')
 for l in selected_links:
     print l
+    in_queue.put(l)
 
-print 'Fetching post details...'
-post_crawler = PostCrawler()
-result = []
+logging.info('Fetching post details...')
+out_queue = strategies.strategies[POST_READING_STRATEGY['name']](in_queue, **POST_READING_STRATEGY['kwargs'])
+logging.info('%s Posts created' % out_queue.qsize())
 
-# t1 = Thread(target=get_post, args=(selected_links[0:max_posts/2]))
+try:
+    for p in iter(out_queue.get_nowait, None):
+        insert_product(p)
+except Empty as e:
+    pass
 
-for l in selected_links:
-    print 'Fetching post: %s' % l
-    post_crawler = PostCrawler()
-    p = post_crawler.get_post(l)
-    print(p.__dict__)
-    result.append(p)
-    print 'Post: %s created' % l
-
-print '%s Posts created' % len(result)
-
-for p in result:
-    insert_product(p)
-
-print 'All posts persisted'
+logging.info('All posts persisted')
 
 

@@ -3,9 +3,9 @@ import config
 
 from pymongo import MongoClient
 
-client = MongoClient(config.mongodb['host'], config.mongodb['port'])
-db = client[config.mongodb['db']]
-collection = db[config.mongodb['collection']]
+client = MongoClient(config.MONGODB['host'], config.MONGODB['port'])
+db = client[config.MONGODB['db']]
+collection = db[config.MONGODB['collection']]
 
 
 def insert_product(p):
