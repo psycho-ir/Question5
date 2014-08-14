@@ -5,7 +5,7 @@ MONGODB = {'host': 'localhost',
            'db': 'p30download',
            'collection': 'products'}
 
-# It can be
+# It can be :
 # "sequential" When you want to crawl products sequentially ( kwargs is not important  and can be {}
 # Example: POST_READING_STRATEGY = {'name': 'sequential', 'kwargs': {}}
 # "multithread"

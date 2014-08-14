@@ -27,7 +27,10 @@
 </ul>
 
 Then you can run project with running: python run_me.py
-You can change mongodb connection configuration in config.py module. You can change hostname,port,DB name and collecton name.
+
+You can change mongodb connection configuration in config.py module. You can change hostname,port,DB name and collection name.
+Also you can select the strategy of reading posts (Read more about its usage in config.py)
+You can change the number of products for fetching in this file too.
 
 </p>
 
@@ -70,6 +73,12 @@ You can change mongodb connection configuration in config.py module. You can cha
     insert_product method persists posts but before change the id field with _id because in mongodb _id is our primary_key and i want to have a general
     way to insert and update documents.
     i used update operation with upsert=True , this operation can update existed document but if document does not exist it will insert it.
+</p>
+<h2>
+    strategies
+</h2>
+<p>
+    The strategies are defined in this module, currently system has 2 strategy for fetching products (sequential and multithread)
 </p>
 
 <h2>
