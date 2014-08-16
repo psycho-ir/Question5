@@ -3,7 +3,7 @@ __author__ = 'soroosh'
 import strategies
 from category_finder import CategoryCrawler
 from links_finder import PostLinkCrawler
-from persistence import insert_product
+from repository import insert_product
 from Queue import Queue, Empty
 from config import POST_READING_STRATEGY,NUMBER_OF_PRODUCTS
 import logging

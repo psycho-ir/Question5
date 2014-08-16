@@ -17,9 +17,6 @@ class Post:
         self.name = name
         self.id = id
 
-    def __str__(self):
-        return '{id:%s, name:%s, url:%s, views:%s,category:%s,desc:%s,spec:%s,links:%s}'\
-              %(self.id,unicode(self.name),self.url,self.views,unicode(self.category),self.description,unicode(self.specifications),self.download_links)
 
 
 
